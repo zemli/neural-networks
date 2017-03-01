@@ -1,0 +1,95 @@
+
+Back to Week 1
+
+Correct
+1 / 1 points
+1. 
+We often don't know how much data we will need in order for a learning system to generalize well from training data to test data on a given task.
+
+True or false: when choosing how much data to give to a learning system in order to make it generalize well, we need to make sure that we don't give it too much data.
+
+False
+Correct 
+
+True
+
+Incorrect
+0 / 1 points
+2. 
+Data can change over time, in particular we might observe different input/output relationships. In order to account for this we can adapt our learning system to the new data by, for example, training on new examples.
+
+If the relationship between inputs and outputs for old examples has not changed, how can we prevent a neural network from forgetting about the old data?
+
+Prevent the system from changing the weights too much.
+This should be selected 
+
+Ignore the issue and hope that everything will be OK.
+Un-selected is correct 
+
+Train on a mix of old and new data.
+Correct 
+
+Train two networks, one for old data and one for new data.
+This should not be selected 
+The problem with this is that we would not know which network to use for a test case.
+
+Correct
+1 / 1 points
+3. 
+Which of the following are good reasons for why we are interested in unsupervised learning?
+
+It can be used to learn features that may help with supervised tasks.
+Correct 
+
+It lets us avoid supervised learning entirely.
+Un-selected is correct 
+
+It allows academic researchers to publish more papers.
+Un-selected is correct 
+
+It allows us to learn from vast amounts of unlabelled data.
+Correct 
+
+Incorrect
+0 / 1 points
+4. 
+Which of the following tasks are neural networks good at?
+
+logical reasoning
+This should not be selected 
+
+Recognizing fragments of words in a pre-processed sound wave.
+This should be selected 
+
+Recognizing badly written characters.
+Correct 
+Neural networks are good at finding statistical regularities that allow them to recognize patterns. They are not good at flawlessly applying symbolic rules or storing exact numbers.
+
+Storing lists of names and birth dates.
+Un-selected is correct 
+
+Correct
+1 / 1 points
+5. 
+Which number is biggest?
+
+The number of milleseconds in a human lifetime.
+
+The Greek national debt in euros
+
+The number of bits of Random Access Memory (usually just called memory) in a modern laptop.
+
+The number of synapes in a human brain.
+Correct 
+Neurons come in many different types and sizes with very different numbers of connections. Some cells in your cerebellum make 250,000 connections. Other neurons in the cerebellum are tiny and probably outnumber all of the other neurons in your brain. This type of variation makes it much harder than you might think to estimate the total number of synapses, but neuroscientists generally estimate about 100 trillion give or take a factor of 10.
+
+Incorrect0 / 1 points
+6. Which of the following facts provides support for the theory that the local neural circuits in most parts of the cortex all use the same general purpose learning algorithm?
+If the visual input is sent to the auditory cortex of a newborn ferret, the "auditory" cells learn to do vision.
+This should be selected 
+Brain scans show that different functions (like object recognition and language understanding) are located in different parts of the cortex.
+Un-selected is correct 
+If part of the cortex is removed early in life, the function that it would have served often gets relocated to another part of cortex.
+Correct 
+The fine-scale anatomy of the cortex looks pretty much the same all over.
+Correct 

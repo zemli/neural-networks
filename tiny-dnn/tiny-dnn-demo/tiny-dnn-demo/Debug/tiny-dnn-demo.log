@@ -1,0 +1,11 @@
+﻿Build started 2017-03-20 1:00:06 AM.
+     1>Project "c:\Users\Zeming\documents\visual studio 2013\Projects\tiny-dnn-demo\tiny-dnn-demo\tiny-dnn-demo.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
+         main.cpp
+     1>c:\users\zeming\documents\visual studio 2013\projects\tiny-dnn-demo\tiny-dnn-demo\main.cpp(2): fatal error C1083: Cannot open include file: 'tiny_dnn/tiny_dnn.h': No such file or directory
+     1>Done Building Project "c:\Users\Zeming\documents\visual studio 2013\Projects\tiny-dnn-demo\tiny-dnn-demo\tiny-dnn-demo.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.88

@@ -4,11 +4,14 @@
 using namespace std;
 
 int main(){
+	
+	//network<sequential> net = construct_small_cnn();
 	network<sequential> net;
-	//network<sequential> net = construct_cnn();
-	net.load("myNetwork");
+	std::cout << "load models..." << std::endl;
+	net.load("trained-model-simplified-1epoch");
+	//net.load("trained-model-simplified-1epoch");
 
-	train_cnn(net);
+	//train_cnn(net);
 
 	test_dnn(net);
 	

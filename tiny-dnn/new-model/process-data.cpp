@@ -17,5 +17,23 @@ void saveVector(std::vector<std::vector<int>> &vec) {
 
 }
 
+// convert image to vec_t
+void convert_image(std::string imagefilename,
+	double scale,
+	int w,
+	int h,
+	std::vector<vec_t>& data)
+{
+	auto img = cv::imread(imagefilename, cv::IMREAD_GRAYSCALE);
+	if (img.data == nullptr) return; // cannot open, or it's not an image
+
+	cv::Mat_<uint8_t> resized;
+	cv::resize(img, resized, cv::Size(w, h));
+	vec_t d;
+
+	std::transform(resized.begin(), resized.end(), std::back_inserter(d),
+		[=](uint8_t c) { return c * scale; });
+	data.push_back(d);
+}
 
 

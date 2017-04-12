@@ -5,7 +5,9 @@ int main(int argc, char **argv) {
 	std::string modelName;
 
 	if (argc < 2) {
-		std::cerr << "Usage : " << argv[0] << "--option model_name folder_name" << std::endl;
+		std::cerr << "Usage : " << argv[0] 
+			<< "--option model_name folder_name (e.g. --test trained-new-model small-classified)" 
+			<< std::endl;
 		system("PAUSE");
 		return -1;
 	}
@@ -13,17 +15,17 @@ int main(int argc, char **argv) {
 	for (int count = 1; count+1 < argc; ) {
 		std::string argname(argv[count]);
 		if (argname == "--construct") {
-			std::cout << argv[count] << "mode selected" << std::endl;
+			std::cout << argv[count] << " mode selected" << std::endl;
 			network<sequential> net = construct_small_cnn();
 			count++;
 		}
 		else if (argname == "--train") {
-			std::cout << argv[count] << "mode selected" << std::endl;
+			std::cout << argv[count] << " mode selected" << std::endl;
 			if (count + 2 < argc) {
 				modelName = argv[++count];
 				network<sequential> net;
 				std::cout << "loading model: "<< modelName << std::endl;
-				net.load(modelName);
+				net.load("../model/" + modelName);
 
 				folderName = argv[++count];
 				std::cout << "training model on " << folderName << " dataset" << std::endl;
@@ -37,13 +39,13 @@ int main(int argc, char **argv) {
 			}
 		}
 		else if (argname == "--test") {
-			std::cout << argv[count] << "mode selected" << std::endl;
+			std::cout << argv[count] << " mode selected" << std::endl;
 			if (count + 2 < argc) {
 				modelName = argv[++count];
 				network<sequential> net;
 				std::cout << "loading model: " << modelName << std::endl;
-				net.load(modelName);
-
+				net.load("../model/" + modelName);
+				showInfo(net);
 				folderName = argv[++count];
 				std::cout << "testing model on " << folderName << " dataset" << std::endl;
 				test_cnn(net, folderName);

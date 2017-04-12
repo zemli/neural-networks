@@ -1,5 +1,13 @@
 #include "header.h"
 
+void showInfo(network<sequential> net) {
+	for (size_t i = 0; i < net.depth(); i++) {
+		std::cout << "#layer:" << i << "\n";
+		std::cout << "layer type:" << net[i]->layer_type() << "\n";
+		std::cout << "input:" << net[i]->in_data_size() << "(" << net[i]->in_data_shape() << ")\n";
+		std::cout << "output:" << net[i]->out_data_size() << "(" << net[i]->out_data_shape() << ")\n";
+	}
+}
 
 network<sequential> construct_cnn() {
 	network<sequential> net;
@@ -18,27 +26,23 @@ network<sequential> construct_cnn() {
 		//<< fully_connected_layer<softmax>(14 * 14 * 6, 10);
 
 	//print each layer's information
-	for (size_t i = 0; i < net.depth(); i++) {
-		std::cout << "#layer:" << i << "\n";
-		std::cout << "layer type:" << net[i]->layer_type() << "\n";
-		std::cout << "input:" << net[i]->in_data_size() << "(" << net[i]->in_data_shape() << ")\n";
-		std::cout << "output:" << net[i]->out_data_size() << "(" << net[i]->out_data_shape() << ")\n";
-	}
-	net.save("myNetwork");
+	showInfo(net);
+	net.save("../model/myNetwork");
 	return net;
 }
 
 network<sequential> construct_small_cnn() {
 	network<sequential> net;
-	net << conv<relu>(48, 48, 3, 1, 32, padding::same) 
+	net << conv<relu>(48, 48, 3, 1, 32, padding::same)
+		//<< batch_norm()
 		<< max_pool<tan_h>(48, 48, 32, 2)
 		<< conv<relu>(24, 24, 3, 32, 64, padding::same)
 		<< max_pool<tan_h>(24, 24, 64, 2)
 		<< conv<relu>(12, 12, 3, 64, 128, padding::same)
 		<< max_pool<tan_h>(12, 12, 128, 2)
-		<< fc<relu>(6 * 6 * 128, 128)
-		<< fc<relu>(128, 64)
-		<< fc<softmax>(64, 7);
+		<< fc<relu>(6 * 6 * 128, 256)
+		<< fc<relu>(256, 128)
+		<< fc<softmax>(128, 7);
 
 	for (size_t i = 0; i < net.depth(); i++) {
 		std::cout << "#layer:" << i << "\n";
@@ -46,7 +50,7 @@ network<sequential> construct_small_cnn() {
 		std::cout << "input:" << net[i]->in_data_size() << "(" << net[i]->in_data_shape() << ")\n";
 		std::cout << "output:" << net[i]->out_data_size() << "(" << net[i]->out_data_shape() << ")\n";
 	}
-	net.save("smallNetwork");
+	net.save("newNetwork");
 	return net;
 }
 
@@ -91,31 +95,4 @@ void test_cnn(network<sequential> &net, std::string folderName){
 	std::cout << "count in total:" << count << "  label size is: " << test_images.size() << std::endl;
 	std::cout << "right in total:" << right << std::endl;
 	
-}
-
-// convert image to vec_t
-void convert_image(std::string imagefilename,
-	double scale,
-	int w,
-	int h,
-	std::vector<vec_t>& data)
-{
-	//cv::Mat img = cv::imread(imagefilename, 1);
-	//if (!img.data){// cannot open, or it's not an image
-	//	std::cout << "Could not open or find the image" << std::endl;
-	//	return;
-	//}
-	//cv::Mat_<uint8_t> resized;
-	//cv::resize(img, resized, cv::Size(w, h));
-
-	//vec_t d;
-	//if (img.isContinuous()) {
-	//	d.assign((uint8_t)img.datastart, (uint8_t)img.dataend);
-	//}
-	//else {
-	//	for (int i = 0; i < img.rows; ++i) {
-	//		d.insert(d.end(), img.ptr<uchar>(i), img.ptr<uchar>(i)+img.cols);
-	//	}
-	//}
-	//data.push_back(d);
 }

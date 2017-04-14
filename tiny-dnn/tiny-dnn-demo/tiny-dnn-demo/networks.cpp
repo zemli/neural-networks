@@ -9,7 +9,8 @@ network<sequential> construct_cnn() {
 		cout << "layer type:" << net[i]->layer_type() << "\n";
 		cout << "input:" << net[i]->in_data_size() << "(" << net[i]->in_data_shape() << ")\n";
 		cout << "output:" << net[i]->out_data_size() << "(" << net[i]->out_data_shape() <<")\n";
-	}
+	}
+	
 	return net;
 }
 

@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
 				network<sequential> net;
 				std::cout << "loading model: " << modelName << std::endl;
 				net.load("../model/" + modelName);
-				showInfo(net);
+				printInfo(net);
 				folderName = argv[++count];
 				std::cout << "testing model on " << folderName << " dataset" << std::endl;
 				test_cnn(net, folderName);
@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
 				//comment for speeding up test
 				std::cout << "loading model: " << modelName << std::endl;
 				net.load("../model/" + modelName);
-				showInfo(net);
+				printInfo(net);
 
 				if (demo(net)) {
 					std::cout << "demo failed" << std::endl;
@@ -72,9 +72,6 @@ int main(int argc, char **argv) {
 					return -1;
 				}
 				count++;	 //for skipping one parameter. making the format same
-				/*folderName = argv[++count];
-				std::cout << "testing model on " << folderName << " dataset" << std::endl;
-				test_cnn(net, folderName);*/
 			}
 			else {
 				std::cerr << "Usage : --option " << "model_name (example:smallNetwork)" << " folder_name (example:classified)" << std::endl;

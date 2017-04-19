@@ -1,6 +1,5 @@
 #include "header.h"
 
-
 void saveVector(std::vector<std::vector<int>> &vec) {
 	std::ofstream myfile("../experiment-data/confusion-matrix.txt");
 	if (myfile.is_open()){
@@ -32,26 +31,15 @@ int convert_image(cv::Mat img, vec_t& data) {
 	return 0;
 }
 
-int detectAndCrop(cv::Mat &frame) {
-	std::string xmlPath = "../sources/";
-	std::string face_cascade_name = "haarcascade_frontalface_alt.xml";
-	cv::CascadeClassifier face_cascade;
-	if (!face_cascade.load(xmlPath + face_cascade_name)) { 
-		std::cout<<"(!)Error loading Cascade Classifier"<<std::endl;
-		return -1; 
-	}
+int detectAndCrop(cv::Mat &frame, cv::CascadeClassifier &face_cascade) {
 
 	std::vector<cv::Rect> faces;
 
-	if (frame.channels() > 1)
-		cvtColor(frame, frame, CV_BGR2GRAY);
-	cv::imshow("before", frame);
 	//detect face
 	face_cascade.detectMultiScale(frame, faces, 1.1, 3, 0 | CV_HAAR_SCALE_IMAGE, cv::Size(150, 150));
 	//crop image
 	cv::Rect roi(faces[0].x, faces[0].y, faces[0].width, faces[0].width);
 	cv::Mat image_roi = frame(roi);
-	cv::imshow("face", image_roi);
 	//resize
 	cv::Size size(48, 48);
 	resize(image_roi, frame, size);

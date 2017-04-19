@@ -1,6 +1,6 @@
 #include "header.h"
 
-void showInfo(network<sequential> net) {
+void printInfo(network<sequential> net) {
 	for (size_t i = 0; i < net.depth(); i++) {
 		std::cout << "#layer:" << i << "\n";
 		std::cout << "layer type:" << net[i]->layer_type() << "\n";
@@ -26,7 +26,7 @@ network<sequential> construct_cnn() {
 		//<< fully_connected_layer<softmax>(14 * 14 * 6, 10);
 
 	//print each layer's information
-	showInfo(net);
+	printInfo(net);
 	net.save("../model/myNetwork");
 	return net;
 }
@@ -85,7 +85,9 @@ void test_cnn(network<sequential> &net, std::string folderName){
 	clock_t begin = clock();
 	for (size_t i = 0; i < test_images.size(); i ++) {
 		predicted_label = net.predict_label(test_images[i]);
-		std::cout << "predicted_label:" << predicted_label << "   label is:" << test_labels[i] << std::endl;
+		std::cout << "predicted_label:" << emotion_labels[predicted_label] 
+				  << "   label is:" << emotion_labels[test_labels[i]] 
+				  << std::endl;
 		if (predicted_label == test_labels[i]) right++;
 		vec[test_labels[i]][predicted_label]++;
 		//std::cout << "similarity:" << net.predict_max_value(test_images[i]) << std::endl;

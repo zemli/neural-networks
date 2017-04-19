@@ -13,7 +13,7 @@ using namespace tiny_dnn::layers;
 
 network<sequential> construct_cnn();
 network<sequential> construct_small_cnn();
-void showInfo(network<sequential> net);
+void printInfo(network<sequential> net);
 
 void train_cnn(network<sequential> &net, std::string folderName);
 void test_cnn(network<sequential> &net, std::string folderName);
@@ -22,4 +22,6 @@ int demo(network<sequential> &net);
 
 void saveVector(std::vector<std::vector<int>> &vec);
 int convert_image(cv::Mat img, vec_t& data);
-int detectAndCrop(cv::Mat &frame);
+int detectAndCrop(cv::Mat &frame, cv::CascadeClassifier &face_cascade);
+
+const std::vector<std::string> emotion_labels{ "neutral", "anger", "disgust", "fear", "happy", "sadness", "surprise" };

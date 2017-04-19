@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <ctime>
 
 #include "tiny_dnn/tiny_dnn.h"
 #include <opencv2/opencv.hpp>
@@ -17,5 +18,8 @@ void showInfo(network<sequential> net);
 void train_cnn(network<sequential> &net, std::string folderName);
 void test_cnn(network<sequential> &net, std::string folderName);
 
+int demo(network<sequential> &net);
+
 void saveVector(std::vector<std::vector<int>> &vec);
-void convert_image(std::string imagefilename, double scale, int w, int h, std::vector<vec_t>& data);
+int convert_image(cv::Mat img, vec_t& data);
+int detectAndCrop(cv::Mat &frame);

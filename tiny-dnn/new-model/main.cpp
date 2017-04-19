@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
 		return -1;
 	}
 
-	for (int count = 1; count+1 < argc; ) {
+	for (int count = 1; count+1 < argc; count++) {
 		std::string argname(argv[count]);
 		if (argname == "--construct") {
 			std::cout << argv[count] << " mode selected" << std::endl;
@@ -52,6 +52,32 @@ int main(int argc, char **argv) {
 			}
 			else {
 				std::cerr << "Usage : --option " << "model_name (example:smallNetwork)" << " folder_name (example:classified)"<< std::endl;
+				system("PAUSE");
+				return -1;
+			}
+		}
+		else if (argname == "--demo") {
+			std::cout << argv[count] << " mode selected" << std::endl;
+			if (count + 2 < argc) {
+				modelName = argv[++count];
+				network<sequential> net;
+				//comment for speeding up test
+				std::cout << "loading model: " << modelName << std::endl;
+				net.load("../model/" + modelName);
+				showInfo(net);
+
+				if (demo(net)) {
+					std::cout << "demo failed" << std::endl;
+					system("PAUSE");
+					return -1;
+				}
+				count++;	 //for skipping one parameter. making the format same
+				/*folderName = argv[++count];
+				std::cout << "testing model on " << folderName << " dataset" << std::endl;
+				test_cnn(net, folderName);*/
+			}
+			else {
+				std::cerr << "Usage : --option " << "model_name (example:smallNetwork)" << " folder_name (example:classified)" << std::endl;
 				system("PAUSE");
 				return -1;
 			}

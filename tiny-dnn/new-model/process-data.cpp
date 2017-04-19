@@ -18,22 +18,44 @@ void saveVector(std::vector<std::vector<int>> &vec) {
 }
 
 // convert image to vec_t
-void convert_image(std::string imagefilename,
-	double scale,
-	int w,
-	int h,
-	std::vector<vec_t>& data)
-{
-	auto img = cv::imread(imagefilename, cv::IMREAD_GRAYSCALE);
-	if (img.data == nullptr) return; // cannot open, or it's not an image
+int convert_image(cv::Mat img, vec_t& data) {
+	
+	if (img.data == nullptr) return -1; // cannot open, or it's not an image
 
-	cv::Mat_<uint8_t> resized;
-	cv::resize(img, resized, cv::Size(w, h));
-	vec_t d;
+	cv::Mat_<uint8_t> resized = img;
+	//cv::resize(img, resized, cv::Size(w, h));
 
-	std::transform(resized.begin(), resized.end(), std::back_inserter(d),
-		[=](uint8_t c) { return c * scale; });
-	data.push_back(d);
+	std::transform(resized.begin(), resized.end(), std::back_inserter(data), [=](uint8_t c) { return c/255.0*2-1; });
+																		//predefined scale_max = 1, scale_min = -1
+	//data.push_back(d);
+
+	return 0;
+}
+
+int detectAndCrop(cv::Mat &frame) {
+	std::string xmlPath = "../sources/";
+	std::string face_cascade_name = "haarcascade_frontalface_alt.xml";
+	cv::CascadeClassifier face_cascade;
+	if (!face_cascade.load(xmlPath + face_cascade_name)) { 
+		std::cout<<"(!)Error loading Cascade Classifier"<<std::endl;
+		return -1; 
+	}
+
+	std::vector<cv::Rect> faces;
+
+	if (frame.channels() > 1)
+		cvtColor(frame, frame, CV_BGR2GRAY);
+	cv::imshow("before", frame);
+	//detect face
+	face_cascade.detectMultiScale(frame, faces, 1.1, 3, 0 | CV_HAAR_SCALE_IMAGE, cv::Size(150, 150));
+	//crop image
+	cv::Rect roi(faces[0].x, faces[0].y, faces[0].width, faces[0].width);
+	cv::Mat image_roi = frame(roi);
+	cv::imshow("face", image_roi);
+	//resize
+	cv::Size size(48, 48);
+	resize(image_roi, frame, size);
+	return 0;
 }
 
 

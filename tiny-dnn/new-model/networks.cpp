@@ -75,6 +75,7 @@ void test_cnn(network<sequential> &net, std::string folderName){
 	std::vector<label_t> test_labels;
 	std::vector<vec_t> test_images;	
 	label_t predicted_label;
+	
 	int count=0, right=0;
 	std::vector<std::vector<int>> vec(7, std::vector<int>(7, 0));
 

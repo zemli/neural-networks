@@ -18,7 +18,7 @@ void printInfo(network<sequential> net);
 void train_cnn(network<sequential> &net, std::string folderName);
 void test_cnn(network<sequential> &net, std::string folderName);
 
-int demo(network<sequential> &net);
+int demo(network<sequential> &net, int camIndex);
 
 void saveVector(std::vector<std::vector<int>> &vec);
 int convert_image(cv::Mat img, vec_t& data);

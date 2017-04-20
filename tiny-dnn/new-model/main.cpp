@@ -31,12 +31,6 @@ int main(int argc, char **argv) {
 				std::cout << "training model on " << folderName << " dataset" << std::endl;
 				train_cnn(net, folderName);
 			}
-			else {
-				std::cerr << "Usage : --option " << "model_name (example:smallNetwork)" << " folder_name (example:classified)"
-					<< std::endl;
-				system("PAUSE");
-				return -1;
-			}
 		}
 		else if (argname == "--test") {
 			std::cout << argv[count] << " mode selected" << std::endl;
@@ -50,37 +44,44 @@ int main(int argc, char **argv) {
 				std::cout << "testing model on " << folderName << " dataset" << std::endl;
 				test_cnn(net, folderName);
 			}
-			else {
-				std::cerr << "Usage : --option " << "model_name (example:smallNetwork)" << " folder_name (example:classified)"<< std::endl;
-				system("PAUSE");
-				return -1;
-			}
 		}
 		else if (argname == "--demo") {
 			std::cout << argv[count] << " mode selected" << std::endl;
 			if (count + 2 < argc) {
 				modelName = argv[++count];
+				int camIndex = std::stoi(argv[++count], nullptr, 10);
 				network<sequential> net;
 				//comment for speeding up test
 				std::cout << "loading model: " << modelName << std::endl;
 				net.load("../model/" + modelName);
 				printInfo(net);
 
-				if (demo(net)) {
-					std::cout << "demo failed" << std::endl;
-					system("PAUSE");
-					return -1;
+				while (true) {
+					try {
+						if (demo(net, camIndex)) {
+							std::cout << "demo failed" << std::endl;
+							system("PAUSE");
+							//return -1;
+						}
+					}
+					catch (const std::exception& e) {
+						std::cout << e.what() << std::endl;
+					}
+					std::cout << "Do you want to repeat demo now? (y/n)" << std::endl;
+					char choice;
+					std::cin >> choice;
+					if (choice != 'Y' && choice != 'y') {
+						std::cout << "ending" << std::endl;
+						system("PAUSE");
+						return -1;
+					}
 				}
-				count++;	 //for skipping one parameter. making the format same
-			}
-			else {
-				std::cerr << "Usage : --option " << "model_name (example:smallNetwork)" << " folder_name (example:classified)" << std::endl;
-				system("PAUSE");
-				return -1;
+				
 			}
 		}
 		else {
-			std::cerr << "Usage : " << argv[0] << "--option model_name folder_name"<< std::endl;
+			std::cerr << "Usage : " << argv[0] << " --option model_name folder_name"<< std::endl;
+			std::cerr << "e.g. : " << argv[0] << " --test cnn-trained-model ck_dataset  or --demo trained-new-model 0" << std::endl;
 			system("PAUSE");
 			return -1;
 		}

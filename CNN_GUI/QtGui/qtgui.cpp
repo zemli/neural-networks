@@ -8,21 +8,17 @@ QtGui::QtGui(QWidget *parent)
 	ui.startButton->setEnabled(false);
 }
 
-void QtGui::on_loadButton_clicked()
-{
-	net.load("../sources/trained-new-model");
+void QtGui::on_loadButton_clicked() {
+	net.load("./Resources/trained-new5-model");
 	ui.startButton->setEnabled(true);
 	QMessageBox msgBox;
 	msgBox.setText("The CNN model has been loaded.");
 	msgBox.exec();
 }
 
-void QtGui::on_startButton_clicked()
-{	
-	const std::string xmlPath = "../sources/";
-	const std::string face_cascade_name = "haarcascade_frontalface_alt.xml";
+void QtGui::on_startButton_clicked() {	
 	cv::CascadeClassifier face_cascade;
-	if (!face_cascade.load(xmlPath + face_cascade_name)) {
+	if (!face_cascade.load("./Resources/haarcascade_frontalface_alt.xml")) {
 		QMessageBox msgBox;
 		msgBox.setText("Cascade Classifier failed to be loaded.");
 		msgBox.exec();
@@ -36,12 +32,20 @@ void QtGui::on_startButton_clicked()
 		msgBox.exec();
 		return;
 	}
-	while (true){
+	quitLoop = false;
+	while (!quitLoop){
 		cap >> image;
-		if (!image.data) continue; // end of video stream
-		cv::imshow("original video", image);
-		cv::Mat img;
+		if (!image.data) continue; // no data from video stream
+
 		cv::cvtColor(image, img, CV_RGB2GRAY);
+		//show img in mainwindow
+		cv::cvtColor(image, image, CV_BGR2RGB);
+		qimg = QImage((const unsigned char*)(image.data),
+			image.cols, image.rows, QImage::Format_RGB888);
+		// display on label
+		ui.imageLabel->setPixmap(QPixmap::fromImage(qimg));
+		// resize the label to fit the image
+		ui.imageLabel->resize(ui.imageLabel->pixmap()->size());
 
 		if (detectAndCrop(img, face_cascade)) {
 			QMessageBox msgBox;
@@ -49,7 +53,8 @@ void QtGui::on_startButton_clicked()
 			msgBox.exec();
 			continue;
 		}
-
+		//show cropped image
+		cv::imshow(" ", img);
 		tiny_dnn::vec_t data;
 		if (convert_image(img, data)) {
 			QMessageBox msgBox;
@@ -63,22 +68,20 @@ void QtGui::on_startButton_clicked()
 
 		std::vector<std::pair<double, int>> scores;
 		tiny_dnn::vec_t res = net.predict(data);
-		//if (res.empty()) {
-		//	QMessageBox msgBox;
-		//	msgBox.setText("Failed to recognize emotions.");
-		//	msgBox.exec();
-		//	continue;
+
+		//get 7 scores and predicted label
+		//for (int i = 0; i < 7; i++) {
+		//	scores.emplace_back((res[i]), i);
+		//	if (res[i] > max_prob) {
+		//		max_prob = res[i];
+		//		predicted_label = i;
+		//	}
 		//}
-		for (int i = 0; i < 7; i++) {
-			scores.emplace_back((res[i]), i);
-			if (res[i] > max_prob) {
-				max_prob = res[i];
-				predicted_label = i;
-			}
-		}
-
-
-		if (cv::waitKey(10) >= 0) break; // stop capturing by pressing any key
+		cv::waitKey(1);
 	}
 
+}
+
+void QtGui::on_endButton_clicked() {
+	quitLoop = true;
 }

@@ -9,12 +9,6 @@
 
 #include "process_data.h"
 
-#include <opencv2/opencv.hpp>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-
-#include "tiny_dnn/tiny_dnn.h"
-
 class QtGui : public QMainWindow
 {
     Q_OBJECT
@@ -25,11 +19,14 @@ public:
 private slots:
     void on_startButton_clicked();
 	void on_loadButton_clicked();
+	void on_endButton_clicked();
 
 private:
     Ui::QtGuiClass ui;
 	tiny_dnn::network<tiny_dnn::sequential> net;
-    cv::Mat image; // the image variable
+    cv::Mat image, img; 
+	QImage qimg;
+	bool quitLoop = false;
 };
 
 #endif //QTGUI_H

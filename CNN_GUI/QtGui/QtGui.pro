@@ -5,7 +5,7 @@
 TEMPLATE = app
 TARGET = QtGui
 DESTDIR = ../Win32/Debug
-QT += core widgets gui
+QT += core widgets gui charts
 CONFIG += debug
 DEFINES += _SCL_SECURE_NO_WARNINGS WIN64 QT_DLL QT_WIDGETS_LIB
 INCLUDEPATH += ../../../../../../../../opencv/build/include \

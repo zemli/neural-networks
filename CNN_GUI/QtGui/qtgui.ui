@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1071</width>
-    <height>701</height>
+    <width>1215</width>
+    <height>943</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>QtGui</string>
+   <string>Facial Expression Recognition using CNN</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QPushButton" name="startButton">
     <property name="geometry">
      <rect>
-      <x>800</x>
-      <y>210</y>
+      <x>950</x>
+      <y>180</y>
       <width>191</width>
       <height>51</height>
      </rect>
@@ -30,8 +30,8 @@
    <widget class="QPushButton" name="loadButton">
     <property name="geometry">
      <rect>
-      <x>800</x>
-      <y>100</y>
+      <x>950</x>
+      <y>70</y>
       <width>191</width>
       <height>51</height>
      </rect>
@@ -43,8 +43,8 @@
    <widget class="QPushButton" name="endButton">
     <property name="geometry">
      <rect>
-      <x>800</x>
-      <y>320</y>
+      <x>950</x>
+      <y>400</y>
       <width>191</width>
       <height>51</height>
      </rect>
@@ -63,14 +63,45 @@
      </rect>
     </property>
    </widget>
+   <widget class="QPushButton" name="displayButton">
+    <property name="geometry">
+     <rect>
+      <x>950</x>
+      <y>290</y>
+      <width>191</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>display</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="resultLabel">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>600</y>
+      <width>1171</width>
+      <height>211</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1071</width>
-     <height>38</height>
+     <width>1215</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>

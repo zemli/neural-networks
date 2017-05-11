@@ -71,20 +71,21 @@ void train_cnn_ubyte(network<sequential> &net, std::string folderName){
 	net.save("trained-model");
 }
 
-void train_cnn(network<sequential> &net, std::string folderName, int numOfFold, float learning_rate, int batch_size, int epochs) {
-
-	/*std::cout << "reading images..." << std::endl;
-	parse_mnist_images("../dataset/" + folderName + "/train-images-idx3-ubyte", &train_images, -1.0, 1.0, 0, 0);
-	std::cout << "reading labels..." << std::endl;	parse_mnist_labels("../dataset/" + folderName + "/train-labels-idx1-ubyte", &train_labels);*/	for(int idx=1; idx<=numOfFold; idx++) {		std::vector<label_t> train_labels;
-		std::vector<vec_t> train_images;		cross_validation("../dataset/" + folderName, train_images, train_labels);
+void train_cnn(network<sequential> &net, std::string folderName, int numOfFold, float learning_rate, int batch_size, int epochs) {	for(int idx=1; idx<=numOfFold; idx++) {		std::vector<label_t> train_labels;
+		std::vector<vec_t> train_images;		std::vector<label_t> validation_labels;
+		std::vector<vec_t> validation_images;		cross_validation("../dataset/" + folderName, train_images, train_labels, validation_images, validation_labels);
 
 		adagrad opt;
 		opt.alpha = learning_rate;
 	
 		std::cout << "training starting..." << std::endl;
+		std::cout << "training set has " << train_images.size() << " images and " << train_labels.size() << " labels" <<std::endl;
 		net.train<mse>(opt, train_images, train_labels, batch_size, epochs);
 		std::cout << "training finished" << std::endl;
-		net.save("trained-model");
+		net.save("trained-model" + std::to_string(idx));
+
+		std::string name = std::to_string(learning_rate) +"_"+ std::to_string(batch_size) +"_"+ std::to_string(epochs)+"_"+ std::to_string(idx);
+		test_cnn(net, folderName, validation_images, validation_labels, name);
 	}
 }
 
@@ -113,10 +114,38 @@ void test_cnn(network<sequential> &net, std::string folderName){
 	clock_t end = clock();
 	double runtime = double(end - begin) / CLOCKS_PER_SEC / test_images.size();
 	float accuracy = (float)right / (float)test_images.size();
-	saveVector(vec);
+	saveVector(vec, get_date_string());
 	//std::cout << "similarity in total:" << simi << std::endl;
 	std::cout << "dataset size is: " << test_images.size() << "  label size is: " << test_images.size() << std::endl;
 	std::cout << "right prediction: " << right << " accuracy: " << accuracy << std::endl;
 	std::cout << "runtime: " << runtime << std::endl;
 	
+}
+
+void test_cnn(network<sequential> &net, std::string folderName, std::vector<vec_t> validation_images, std::vector<label_t> validation_labels, const std::string name) {
+	std::vector<label_t> test_labels = validation_labels;
+	std::vector<vec_t> test_images = validation_images;
+	label_t predicted_label;
+
+	int right = 0;
+	std::vector<std::vector<int>> vec(7, std::vector<int>(7, 0));
+
+	//use cnn model
+	clock_t begin = clock();
+	for (size_t i = 0; i < test_images.size(); i++) {
+		predicted_label = net.predict_label(test_images[i]);
+		if (predicted_label == test_labels[i]) right++;
+		vec[test_labels[i]][predicted_label]++;
+		//std::cout << "similarity:" << net.predict_max_value(test_images[i]) << std::endl;
+	}
+	clock_t end = clock();
+	double runtime = double(end - begin) / CLOCKS_PER_SEC / test_images.size();
+	float accuracy = (float)right / (float)test_images.size();
+	saveVector(vec, name);
+	std::ofstream myfile("../experiment-data/result_" + name + ".txt");
+	myfile << get_date_string() << std::endl;
+	myfile << "dataset size is: " << test_images.size() << "  label size is: " << test_images.size() << std::endl;
+	myfile << "right prediction: " << right << " accuracy: " << accuracy << std::endl;
+	myfile << "runtime: " << runtime << std::endl;
+	myfile.close();
 }

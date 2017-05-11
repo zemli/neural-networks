@@ -1,9 +1,10 @@
 #include "header.h"
 
-void saveVector(std::vector<std::vector<int>> &vec) {
-	std::ofstream myfile("../experiment-data/confusion-matrix.txt");
+void saveVector(std::vector<std::vector<int>> &vec, const std::string name) {
+	std::ofstream myfile("../experiment-data/confusion-matrix_"+ name + ".txt");
 	if (myfile.is_open()){
 		myfile << "confusion-matrix\n";
+		myfile << get_date_string() << std::endl;
 		for (int row = 0; row < 7; row++) {
 			for(int col = 0; col < 7; col++)
 				myfile << vec[row][col] << " ";
@@ -32,24 +33,62 @@ int convert_image(cv::Mat img, vec_t& data) {
 }
 
 // convert all images found in directory to vec_t
-void convert_images(const std::string & directory, std::vector<vec_t>& data) {
-	std::map<int, vec_t> example;
-	std::map<int, std::vector<vec_t> > myMap;
+//void convert_images(const std::string & directory, std::vector<vec_t>& data) {
+//	std::map<int, vec_t> example;
+//	std::map<int, std::vector<vec_t> > myMap;
+//
+//
+//
+//	boost::filesystem::path dpath(directory);
+//	int index = 0;
+//	BOOST_FOREACH(const boost::filesystem::path& p,
+//		std::make_pair(boost::filesystem::directory_iterator(dpath), boost::filesystem::directory_iterator())) {
+//		if (boost::filesystem::is_directory(p)) continue;
+//		auto img = cv::imread(p.string(), cv::IMREAD_GRAYSCALE);
+//		convert_image(img, data[index++]);
+//	}
+//}
 
+void cross_validation(const std::string directory, std::vector<vec_t> &train_images, std::vector<label_t> &train_labels, std::vector<vec_t> &validation_images, std::vector<label_t> &validation_labels) {
+	const size_t numOfEmotions = 7;
+	std::string time_str = get_date_string();
+	std::ofstream training_file(directory + "/" + "profiles" + "/" + "training" + time_str + ".txt");
+	std::ofstream validation_file(directory + "/" + "profiles" + "/" + "validation" + time_str + ".txt");
 
+	for (int emotion_idx = 0; emotion_idx < numOfEmotions; emotion_idx++) {
+		cv::String path = directory + "/" + std::to_string(emotion_idx) + "/*.png";
+		std::vector<cv::String> filenames;
+		cv::glob(path, filenames);
+		srand((unsigned int)time(NULL));
+		for (size_t i = 0; i < filenames.size(); ++i) {
+			cv::Mat img = cv::imread(filenames[i]);
+			vec_t data;
+			label_t label = static_cast<uint32_t>(emotion_idx);
+			if (img.empty()) {
+				std::cout << "failed to open img" << std::endl;
+				continue;
+			}
+			if (convert_image(img, data)) { //zero-normolize data
+				std::cout << "converting data failed" << std::endl;
+				continue;
+			}
 
-	boost::filesystem::path dpath(directory);
-	int index = 0;
-	BOOST_FOREACH(const boost::filesystem::path& p,
-		std::make_pair(boost::filesystem::directory_iterator(dpath), boost::filesystem::directory_iterator())) {
-		if (boost::filesystem::is_directory(p)) continue;
-		auto img = cv::imread(p.string(), cv::IMREAD_GRAYSCALE);
-		convert_image(img, data[index++]);
+			int random = rand() % 100 + 1; //random number from 1 to 100
+			if (random <= 75) {	// 0.75 = 0.6 / (0.2+0.6)
+				train_images.push_back(data);
+				train_labels.push_back(label);
+				training_file << filenames[i] << " label is " << std::to_string(emotion_idx) <<"\n";
+			}
+			else {
+				validation_images.push_back(data);
+				validation_labels.push_back(label);
+				validation_file << filenames[i] << " label is " << std::to_string(emotion_idx) << "\n";
+			}
+		}
+		
 	}
-}
-
-void cross_validation(const std::string directory, std::vector<vec_t>, std::vector<label_t>) {
-
+	training_file.close();
+	validation_file.close();
 }
 
 

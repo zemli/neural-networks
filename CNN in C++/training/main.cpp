@@ -19,19 +19,6 @@ int main(int argc, char **argv) {
 			network<sequential> net = construct_small_cnn();
 			count++;
 		}
-		else if (argname == "--ubyte_train") {
-			std::cout << argv[count] << " mode selected" << std::endl;
-			if (count + 2 < argc) {
-				modelName = argv[++count];
-				network<sequential> net;
-				std::cout << "loading model: "<< modelName << std::endl;
-				net.load("../model/" + modelName);
-
-				folderName = argv[++count];
-				std::cout << "training model on ubyte " << folderName << " dataset" << std::endl;
-				train_cnn_ubyte(net, folderName);
-			}
-		}
 		else if (argname == "--train") {
 			int numOfFold, batch_size, epochs;
 			float learning_rate;

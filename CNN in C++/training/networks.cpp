@@ -54,37 +54,34 @@ network<sequential> construct_small_cnn() {
 	return net;
 }
 
-void train_cnn_ubyte(network<sequential> &net, std::string folderName){
+void train_cnn_ubyte(network<sequential> &net, std::string folderName, int idx, float learning_rate, int batch_size, int epochs){
 	
 	std::vector<label_t> train_labels;
 	std::vector<vec_t> train_images;
 	
 	std::cout << "reading images..." << std::endl;
-	parse_mnist_images("../dataset/" + folderName + "/train-images-idx3-ubyte", &train_images, -1.0, 1.0, 0, 0);
-	std::cout << "reading labels..." << std::endl;	parse_mnist_labels("../dataset/" + folderName + "/train-labels-idx1-ubyte", &train_labels);
+	parse_mnist_images("../dataset/" + folderName + "/train-images-idx3-ubyte" + std::to_string(idx), &train_images, -1.0, 1.0, 0, 0);
+	std::cout << "reading labels..." << std::endl;	parse_mnist_labels("../dataset/" + folderName + "/train-labels-idx1-ubyte" + std::to_string(idx), &train_labels);
 	adagrad opt;
-	size_t batch_size = 5;
-	size_t epochs = 30;	
+	opt.alpha = learning_rate;
+
 	std::cout << "training starting..." << std::endl;
-	net.train<mse>(opt, train_images, train_labels, batch_size, epochs);
+	std::cout << "training set has " << train_images.size() << " images and " << train_labels.size() << " labels" << std::endl;
+	progress_display disp(train_images.size());
+	net.train<cross_entropy_multiclass>(opt, train_images, train_labels, batch_size, epochs);
 	std::cout << "training finished" << std::endl;
-	net.save("trained-model");
+	//net.save("trained-model");
 }
 
-void train_cnn(network<sequential> &net, std::string folderName, int numOfFold, float learning_rate, int batch_size, int epochs) {	for(int idx=1; idx<=numOfFold; idx++) {		std::vector<label_t> train_labels;
+void train_cnn(network<sequential> &net, std::string folderName, int numOfFold, float learning_rate, int batch_size, int epochs) {	for(int idx=1; idx <= numOfFold; idx++) {		std::vector<label_t> train_labels;
 		std::vector<vec_t> train_images;		std::vector<label_t> validation_labels;
-		std::vector<vec_t> validation_images;		cross_validation("../dataset/" + folderName, train_images, train_labels, validation_images, validation_labels);
+		std::vector<vec_t> validation_images;		std::string name = std::to_string(learning_rate) 							+ "_" + std::to_string(batch_size) 							+ "_" + std::to_string(epochs) 							+ "_" + std::to_string(idx);		//cross_validation("../dataset/" + folderName, 
+		//	train_images, train_labels, 
+		//	validation_images, validation_labels);
 
-		adagrad opt;
-		opt.alpha = learning_rate;
-	
-		std::cout << "training starting..." << std::endl;
-		std::cout << "training set has " << train_images.size() << " images and " << train_labels.size() << " labels" <<std::endl;
-		net.train<mse>(opt, train_images, train_labels, batch_size, epochs);
-		std::cout << "training finished" << std::endl;
-		net.save("trained-model" + std::to_string(idx));
+		train_cnn_ubyte(net, folderName, idx, learning_rate, batch_size, epochs);
+		net.save("trained-model" + name);
 
-		std::string name = std::to_string(learning_rate) +"_"+ std::to_string(batch_size) +"_"+ std::to_string(epochs)+"_"+ std::to_string(idx);
 		test_cnn(net, folderName, validation_images, validation_labels, name);
 	}
 }
@@ -143,9 +140,9 @@ void test_cnn(network<sequential> &net, std::string folderName, std::vector<vec_
 	float accuracy = (float)right / (float)test_images.size();
 	saveVector(vec, name);
 	std::ofstream myfile("../experiment-data/result_" + name + ".txt");
-	myfile << get_date_string() << std::endl;
-	myfile << "dataset size is: " << test_images.size() << "  label size is: " << test_images.size() << std::endl;
-	myfile << "right prediction: " << right << " accuracy: " << accuracy << std::endl;
-	myfile << "runtime: " << runtime << std::endl;
+	myfile << get_date_string() << "\n";
+	myfile << "dataset size is: " << test_images.size() << "  label size is: " << test_images.size() << "\n";
+	myfile << "right prediction: " << right << " accuracy: " << accuracy << "\n";
+	myfile << "runtime: " << runtime << "\n";
 	myfile.close();
 }

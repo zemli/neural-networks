@@ -21,7 +21,7 @@ network<sequential> construct_cnn();
 network<sequential> construct_small_cnn();
 void printInfo(network<sequential> net);
 
-void train_cnn_ubyte(network<sequential> &net, std::string folderName);
+void train_cnn_ubyte(network<sequential> &net, std::string folderName, int idx, float learning_rate, int batch_size, int epochs);
 void train_cnn(network<sequential> &net, std::string folderName, int numOfFold, float learning_rate, int batch_size, int epochs);
 void cross_validation(const std::string directory, std::vector<vec_t> &train_images, std::vector<label_t> &train_labels, std::vector<vec_t> &validation_images, std::vector<label_t> &validation_labels);
 

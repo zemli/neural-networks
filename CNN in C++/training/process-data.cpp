@@ -17,6 +17,28 @@ void saveVector(std::vector<std::vector<int>> &vec, const std::string name) {
 
 }
 
+//get last label_t index in each class
+int getLabelIdx(std::vector<label_t> train_labels, std::vector<size_t> &classIdx) {
+	label_t val = 1;
+	for (label_t it:train_labels) {
+		if (it == val) {
+			train_labels.push_back((size_t)it - 1);
+			val++;
+		}
+	}
+	classIdx.push_back((size_t)train_labels.size()-1);
+	return 0;
+}
+
+int parse_ubyte_cv(std::vector<vec_t> train_images, std::vector<label_t> train_labels, 
+	std::vector<vec_t> &sub_train_images, std::vector<label_t> &sub_train_labels, 
+	std::vector<size_t> classIdx, int numOfFold) {
+	int amount = classIdx[0] + 1;
+	//TODO
+
+	return 0;
+}
+
 // convert image to vec_t
 int convert_image(cv::Mat img, vec_t& data) {
 	

@@ -9,32 +9,31 @@ void printInfo(network<sequential> net) {
 	}
 }
 
-network<sequential> construct_cnn() {
+network<sequential> construct_large_cnn() {
 	network<sequential> net;
-	
-	net << conv<relu>(224, 224, 5, 1, 32, padding::same) // in:224x224x1, 5x5conv, 32fmaps
-		<< max_pool<tan_h>(224, 224, 32, 2) // in:220x220x32, 2x2pooling
-		<< conv<relu>(112, 112, 5, 32, 64, padding::same)
-		<< max_pool<tan_h>(112, 112, 64, 2)
-		<< conv<relu>(56, 56, 3, 64, 128, padding::same)
-		<< max_pool<tan_h>(56, 56, 128, 2)
-		<< conv<relu>(28, 28, 3, 128, 256, padding::same)
-		<< max_pool<tan_h>(28, 28, 256, 2) //out: 14x14x256
-		<< fc<relu>(14 * 14 * 256, 256)
-		<< fc<relu>(256, 128)
-		<< fc<softmax>(128, 7);
-		//<< fully_connected_layer<softmax>(14 * 14 * 6, 10);
+	//
+	//net << conv<relu>(224, 224, 5, 1, 32, padding::same) // in:224x224x1, 5x5conv, 32fmaps
+	//	<< max_pool<tan_h>(224, 224, 32, 2) // in:220x220x32, 2x2pooling
+	//	<< conv<relu>(112, 112, 5, 32, 64, padding::same)
+	//	<< max_pool<tan_h>(112, 112, 64, 2)
+	//	<< conv<relu>(56, 56, 3, 64, 128, padding::same)
+	//	<< max_pool<tan_h>(56, 56, 128, 2)
+	//	<< conv<relu>(28, 28, 3, 128, 256, padding::same)
+	//	<< max_pool<tan_h>(28, 28, 256, 2) //out: 14x14x256
+	//	<< fc<relu>(14 * 14 * 256, 256)
+	//	<< fc<relu>(256, 128)
+	//	<< fc<softmax>(128, 7);
+	//	//<< fully_connected_layer<softmax>(14 * 14 * 6, 10);
 
-	//print each layer's information
-	printInfo(net);
-	net.save("../model/myNetwork");
+	////print each layer's information
+	//printInfo(net);
+	//net.save("../model/myNetwork");
 	return net;
 }
 
-network<sequential> construct_small_cnn() {
+network<sequential> construct_cnn() {
 	network<sequential> net;
 	net << conv<relu>(48, 48, 3, 1, 32, padding::same)
-		//<< batch_norm()
 		<< max_pool<tan_h>(48, 48, 32, 2)
 		<< conv<relu>(24, 24, 3, 32, 64, padding::same)
 		<< max_pool<tan_h>(24, 24, 64, 2)
@@ -58,10 +57,17 @@ void train_cnn_ubyte(network<sequential> &net, std::string folderName, int idx, 
 	
 	std::vector<label_t> train_labels;
 	std::vector<vec_t> train_images;
-	
-	std::cout << "reading images..." << std::endl;
-	parse_mnist_images("../dataset/" + folderName + "/train-images-idx3-ubyte" + std::to_string(idx), &train_images, -1.0, 1.0, 0, 0);
-	std::cout << "reading labels..." << std::endl;	parse_mnist_labels("../dataset/" + folderName + "/train-labels-idx1-ubyte" + std::to_string(idx), &train_labels);
+	if (idx >= 0) {
+		std::cout << "reading images..." << std::endl;
+		parse_mnist_images("../dataset/" + folderName + "/train-images-idx3-ubyte" + std::to_string(idx), &train_images, -1.0, 1.0, 0, 0);
+		std::cout << "reading labels..." << std::endl;		parse_mnist_labels("../dataset/" + folderName + "/train-labels-idx1-ubyte" + std::to_string(idx), &train_labels);
+	}
+	else {
+		std::cout << "reading images..." << std::endl;
+		parse_mnist_images("../dataset/" + folderName + "/train-images-idx3-ubyte", &train_images, -1.0, 1.0, 0, 0);
+		std::cout << "reading labels..." << std::endl;		parse_mnist_labels("../dataset/" + folderName + "/train-labels-idx1-ubyte", &train_labels);
+	}
+	
 	adagrad opt;
 	opt.alpha = learning_rate;
 
@@ -73,17 +79,18 @@ void train_cnn_ubyte(network<sequential> &net, std::string folderName, int idx, 
 	//net.save("trained-model");
 }
 
-void train_cnn(network<sequential> &net, std::string folderName, int numOfFold, float learning_rate, int batch_size, int epochs) {	for(int idx=1; idx <= numOfFold; idx++) {		std::vector<label_t> train_labels;
-		std::vector<vec_t> train_images;		std::vector<label_t> validation_labels;
-		std::vector<vec_t> validation_images;		std::string name = std::to_string(learning_rate) 							+ "_" + std::to_string(batch_size) 							+ "_" + std::to_string(epochs) 							+ "_" + std::to_string(idx);		//cross_validation("../dataset/" + folderName, 
-		//	train_images, train_labels, 
-		//	validation_images, validation_labels);
+void train_cnn_CV(std::string modelName, std::string folderName, int numOfFold, float learning_rate, int batch_size, int epochs) {		for (int idx = 1; idx <= numOfFold; idx++) {			network<sequential> net;
+			std::cout << "loading network: " << modelName << std::endl;
+			net.load("../model/" + modelName);			std::vector<label_t> train_labels;
+			std::vector<vec_t> train_images;			std::string name = "_" + folderName				+ "_" + std::to_string(learning_rate)				+ "_" + std::to_string(batch_size)				+ "_" + std::to_string(epochs)				+ "_" + std::to_string(idx);			//cross_validation("../dataset/" + folderName, 
+			//	train_images, train_labels, 
+			//	validation_images, validation_labels);
 
-		train_cnn_ubyte(net, folderName, idx, learning_rate, batch_size, epochs);
-		net.save("trained-model" + name);
+			train_cnn_ubyte(net, folderName, idx, learning_rate, batch_size, epochs);
+			net.save("trained-model" + name);
 
-		test_cnn(net, folderName, validation_images, validation_labels, name);
-	}
+			test_cnn_CV(net, folderName, idx, name);
+		}	
 }
 
 void test_cnn(network<sequential> &net, std::string folderName){
@@ -119,10 +126,14 @@ void test_cnn(network<sequential> &net, std::string folderName){
 	
 }
 
-void test_cnn(network<sequential> &net, std::string folderName, std::vector<vec_t> validation_images, std::vector<label_t> validation_labels, const std::string name) {
-	std::vector<label_t> test_labels = validation_labels;
-	std::vector<vec_t> test_images = validation_images;
+void test_cnn_CV(network<sequential> &net, std::string folderName, int idx, const std::string name) {
+	std::vector<label_t> test_labels;
+	std::vector<vec_t> test_images;
 	label_t predicted_label;
+
+	std::cout << "reading images..." << std::endl;
+	parse_mnist_images("../dataset/" + folderName + "/test-images-idx3-ubyte" + std::to_string(idx), &test_images, -1.0, 1.0, 0, 0);
+	std::cout << "reading labels..." << std::endl;	parse_mnist_labels("../dataset/" + folderName + "/test-labels-idx1-ubyte" + std::to_string(idx), &test_labels);
 
 	int right = 0;
 	std::vector<std::vector<int>> vec(7, std::vector<int>(7, 0));

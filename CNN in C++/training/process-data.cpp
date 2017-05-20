@@ -20,9 +20,9 @@ void saveVector(std::vector<std::vector<int>> &vec, const std::string name) {
 //get last label_t index in each class
 int getLabelIdx(std::vector<label_t> train_labels, std::vector<size_t> &classIdx) {
 	label_t val = 1;
-	for (label_t it:train_labels) {
-		if (it == val) {
-			train_labels.push_back((size_t)it - 1);
+	for (size_t i = 0; i < train_labels.size(); i++) {
+		if (train_labels[i] == val) {
+			classIdx.push_back(i - 1);
 			val++;
 		}
 	}

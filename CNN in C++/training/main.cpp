@@ -1,6 +1,6 @@
 #include "header.h"
 
-int main(int argc, char **argv) {
+int main_exe(int argc, char **argv) {
 	std::string folderName;
 	std::string modelName;
 
@@ -54,6 +54,8 @@ int main(int argc, char **argv) {
 				epochs = atoi(argv[++count]);
 
 				train_cnn_ubyte(net, folderName, -1/*means not for cross-validation*/, learning_rate, batch_size, epochs);
+				std::string name = "_" + folderName					+ "_" + std::to_string(learning_rate)					+ "_" + std::to_string(batch_size)					+ "_" + std::to_string(epochs)					+ "_" + "final";
+				net.save("trained-model" + name);
 			}
 		}
 		else if (argname == "--test") {
@@ -111,7 +113,19 @@ int main(int argc, char **argv) {
 			return -1;
 		}
 	}
-	
-	//system("PAUSE");
+
 	return 0;
+}
+
+int main(int argc, char **argv) {
+	int code;
+	try {
+		code = main_exe(argc, argv);
+	}
+	catch (std::exception& e) {
+		std::cout << e.what() << std::endl;
+		code = -1;
+	}
+	//system("PAUSE");
+	return code;
 }

@@ -17,6 +17,8 @@ using namespace tiny_dnn;
 using namespace tiny_dnn::activation;
 using namespace tiny_dnn::layers;
 
+int main_exe(int argc, char **argv);
+
 network<sequential> construct_cnn();
 network<sequential> construct_large_cnn();
 void printInfo(network<sequential> net);

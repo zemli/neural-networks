@@ -40,11 +40,17 @@ int main_exe(int argc, char **argv) {
 		else if (argname == "--train_final") {
 			int batch_size, epochs;
 			float learning_rate;
+			std::vector<label_t> train_labels;
+			std::vector<vec_t> train_images;
 			std::cout << argv[count] << " mode selected" << std::endl;
 			if (count + 5 < argc) {
 				modelName = argv[++count];
 				folderName = argv[++count];
 				std::cout << "training model on " << folderName << " dataset" << std::endl;
+				std::cout << "reading images..." << std::endl;
+				parse_mnist_images("../dataset/" + folderName + "/train-images-idx3-ubyte", &train_images, -1.0, 1.0, 0, 0);
+				std::cout << "reading labels..." << std::endl;				parse_mnist_labels("../dataset/" + folderName + "/train-labels-idx1-ubyte", &train_labels);
+
 				network<sequential> net;
 				std::cout << "loading network: " << modelName << std::endl;
 				net.load("../model/" + modelName);
@@ -53,7 +59,7 @@ int main_exe(int argc, char **argv) {
 				batch_size = atoi(argv[++count]);
 				epochs = atoi(argv[++count]);
 
-				train_cnn_ubyte(net, folderName, -1/*means not for cross-validation*/, learning_rate, batch_size, epochs);
+				train_cnn_ubyte(net, train_images, train_labels, learning_rate, batch_size, epochs);
 				std::string name = "_" + folderName					+ "_" + std::to_string(learning_rate)					+ "_" + std::to_string(batch_size)					+ "_" + std::to_string(epochs)					+ "_" + "final";
 				net.save("trained-model" + name);
 			}

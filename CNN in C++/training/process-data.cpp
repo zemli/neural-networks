@@ -29,13 +29,23 @@ int getLabelIdx(std::vector<label_t> train_labels, std::vector<size_t> &classIdx
 	classIdx.push_back((size_t)train_labels.size()-1);
 	return 0;
 }
+//split training set for cross-validation
+int parse_ubyte_cv(std::vector<vec_t> train_images, std::vector<label_t> train_labels,	std::vector<vec_t> &sub_train_images, std::vector<label_t> &sub_train_labels,	std::vector<vec_t> &test_images, std::vector<label_t> &test_labels, int idx, int numOfFold) {
 
-int parse_ubyte_cv(std::vector<vec_t> train_images, std::vector<label_t> train_labels, 
-	std::vector<vec_t> &sub_train_images, std::vector<label_t> &sub_train_labels, 
-	std::vector<size_t> classIdx, int numOfFold) {
-	int amount = classIdx[0] + 1;
-	//TODO
+	if (train_images.size() != train_labels.size()) return -1;
 
+	size_t size = train_images.size() / numOfFold;
+	size_t start = (idx - 1) * size;
+	for (size_t i = 0; i < train_images.size(); i++) {
+		if (i < start || i >= start + size) {
+			sub_train_images.push_back(train_images[i]);
+			sub_train_labels.push_back(train_labels[i]);
+		}
+		else {
+			test_images.push_back(train_images[i]);
+			test_labels.push_back(train_labels[i]);
+		}
+	}
 	return 0;
 }
 
